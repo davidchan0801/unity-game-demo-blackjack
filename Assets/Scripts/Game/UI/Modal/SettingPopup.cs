@@ -2,9 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Runtime.InteropServices;
 
 public class SettingPopup : BaseView
 {
+#if UNITY_IPHONE
+    [DllImport("__Internal")]
+    private static extern void showWebview(string urlString);
+#endif
+
     [SerializeField] private CustomButton closeBtn;
     [SerializeField] private Text languageText;
     [SerializeField] private CustomButton nextLanguageBtn;
@@ -16,6 +22,7 @@ public class SettingPopup : BaseView
     [SerializeField] private CustomButton resetBtn;
     [SerializeField] private GameObject homeBtnRowObj;
     [SerializeField] private GameObject resetBtnRowObj;
+    [SerializeField] private CustomButton githubBtn;
 
     // Start is called before the first frame update
     void Start()
@@ -25,6 +32,7 @@ public class SettingPopup : BaseView
         resetBtn.onClick += OnClick;
         perviousLanguageBtn.onClick += OnClick;
         nextLanguageBtn.onClick += OnClick;
+        githubBtn.onClick += OnWebpageClick;
         volumeSlider.onValueChanged.AddListener(OnValueChanged);
         bgmToggle.onValueChanged.AddListener(OnBGMValueChanged);
         sfxToggle.onValueChanged.AddListener(OnSFXValueChanged);
@@ -41,6 +49,7 @@ public class SettingPopup : BaseView
         resetBtn.onClick -= OnClick;
         perviousLanguageBtn.onClick -= OnClick;
         nextLanguageBtn.onClick -= OnClick;
+        githubBtn.onClick -= OnWebpageClick;
         volumeSlider.onValueChanged.RemoveListener(OnValueChanged);
         bgmToggle.onValueChanged.RemoveListener(OnBGMValueChanged);
         sfxToggle.onValueChanged.RemoveListener(OnSFXValueChanged);
@@ -113,5 +122,21 @@ public class SettingPopup : BaseView
     
     void OnValueChanged(float value) {
         SoundManager.Instance.Volume = value;
+    }
+
+    void OnWebpageClick(CustomButton pBtn) {
+#if UNITY_IPHONE
+        // Now we check that it's actually an iOS device/simulator, not the Unity Player. You only get plugins on the actual device or iOS Simulator.
+        if (Application.platform == RuntimePlatform.IPhonePlayer)
+        {
+            // this calls our native method defined above
+            showWebview("https://github.com/davidchan0801");
+        }
+#elif UNITY_ANDROID
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            // this calls our native method defined above
+        }
+#endif
     }
 }
