@@ -6,6 +6,8 @@ public class MenuView : BaseView
 {
     [SerializeField] private CustomButton settingBtn;
     [SerializeField] private CustomButton pokerBtn;
+    [SerializeField] private CardSequenceAnimator animator;
+    private int playCount;
 
     // Start is called before the first frame update
     void Start()
@@ -13,12 +15,29 @@ public class MenuView : BaseView
         settingBtn.onClick += OnClick;
         pokerBtn.onClick += OnClick;
         SoundManager.Instance.PlayBGMMusic("chill-abstract-intention-12099");
+        
+        animator.onFinish += PlayAnimation;
+        playCount = 0;
+        PlayAnimation();
     }
 
     void OnDestroy()
     {
         settingBtn.onClick -= OnClick;
         pokerBtn.onClick -= OnClick;
+
+        animator.onFinish -= PlayAnimation;
+    }
+
+    void PlayAnimation() {
+        playCount += 1;
+        StartCoroutine(_PlayAnimation());
+    }
+
+    IEnumerator _PlayAnimation() {
+        if (playCount%2 == 0)
+            yield return new WaitForSeconds(2);
+        animator.Play();
     }
 
     // Update is called once per frame

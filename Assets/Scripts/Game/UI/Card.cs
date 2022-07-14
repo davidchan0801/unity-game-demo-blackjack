@@ -8,6 +8,8 @@ public class Card : MonoBehaviour
 {
     public int CardIndex;
     public Image Image;
+    public Sprite frontCardSprite;
+    public Sprite backCardSprite;
 
     public int CardNumber {
         get {
@@ -25,6 +27,13 @@ public class Card : MonoBehaviour
             number += 1;
             return number;
         }
+    }
+
+    public void Flip() {
+        if (Image.sprite == backCardSprite)
+            Image.sprite = frontCardSprite;
+        else
+            Image.sprite = backCardSprite;
     }
 
     // Start is called before the first frame update
